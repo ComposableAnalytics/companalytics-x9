@@ -1,0 +1,1 @@
+﻿nuget pack .\CompAnalytics.X9.csproj -IncludeReferencedProjects -OutputDirectory .\releases

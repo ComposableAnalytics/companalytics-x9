@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>0.1.1</version>
+    <title>$title$</title>
+    <authors>Ryan O'Shea</authors>
+    <owners>ryanoshea, composableanalytics</owners>
+    <licenseUrl>https://composable.ai/deployment-licensing/</licenseUrl>
+    <projectUrl>https://composable.ai</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Provides classes for reading, manipulating, authoring, and writing X9.100-187 Image Cash Letter files. Some special-purpose classes and methods are provided specifically to accelerate production of these files for JPMorgan Chase, but all of the following record types are supported for general-purpose use: 01, 10, 20, 25, 26, 50, 52*, 70, 90, 99.
+    
+    * Record Type 52 (Image View Data Record) supports dynamic-length image data, but no other dynamic-length fields are currently supported (e.g. image data signature).
+    </description>
+    <releaseNotes>Included XML documentation for X9 assembly.</releaseNotes>
+    <copyright>Copyright 2019 by Composable Analytics, Inc.</copyright>
+    <tags>x9 finance composable icl check payment bank transfer deposit</tags>
+    <dependencies>
+      <dependency id="EntityFramework" version="4.0.30319" />
+    </dependencies>
+  </metadata>
+</package>

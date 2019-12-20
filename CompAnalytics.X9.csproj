@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{74A63A65-CADA-4C8F-962C-EBEAFBDB374E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CompAnalytics.X9</RootNamespace>
+    <AssemblyName>CompAnalytics.X9</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>..\companalytics.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\AssemblyCompany.cs">
+      <Link>Properties\AssemblyCompany.cs</Link>
+    </Compile>
+    <Compile Include="..\AssemblyVersion.cs">
+      <Link>Properties\AssemblyVersion.cs</Link>
+    </Compile>
+    <Compile Include="Document\X9DocumentComponent.cs" />
+    <Compile Include="JPMorganAuthoring\BundleAuthoringInfo.cs" />
+    <Compile Include="JPMorganAuthoring\DepositAuthoringInfo.cs" />
+    <Compile Include="JPMorganAuthoring\DepositItemAuthoringInfo.cs" />
+    <Compile Include="JPMorganAuthoring\ImageAuthoringInfo.cs" />
+    <Compile Include="JPMorganAuthoring\X9AuthoringInfo.cs" />
+    <Compile Include="Document\X9DepositItem.cs" />
+    <Compile Include="Document\X9Bundle.cs" />
+    <Compile Include="Document\X9Deposit.cs" />
+    <Compile Include="Document\X9DepositItemImage.cs" />
+    <Compile Include="JPMorganAuthoring\JPMorganConsts.cs" />
+    <Compile Include="Records\CashLetterTrailerRecord.cs" />
+    <Compile Include="Records\BundleTrailerRecord.cs" />
+    <Compile Include="Records\CheckDetailAddendumRecord.cs" />
+    <Compile Include="Records\FileTrailerRecord.cs" />
+    <Compile Include="Records\ImageViewDataRecord.cs" />
+    <Compile Include="Records\ImageViewDetailRecord.cs" />
+    <Compile Include="Records\CheckDetailRecord.cs" />
+    <Compile Include="Records\BundleHeaderRecord.cs" />
+    <Compile Include="Records\CashLetterHeaderRecord.cs" />
+    <Compile Include="Records\FileHeaderRecord.cs" />
+    <Compile Include="RecordTypes.cs" />
+    <Compile Include="RecordByteSegment.cs" />
+    <Compile Include="X9ImageField.cs" />
+    <Compile Include="X9Modifier.cs" />
+    <Compile Include="X9Writer.cs" />
+    <Compile Include="X9TextField.cs" />
+    <Compile Include="X9Field.cs" />
+    <Compile Include="X9FieldDataType.cs" />
+    <Compile Include="X9FieldType.cs" />
+    <Compile Include="X9DynamicLengthRecord.cs" />
+    <Compile Include="X9Record.cs" />
+    <Compile Include="Document\X9Document.cs" />
+    <Compile Include="X9Reader.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CompAnalytics.Contracts\CompAnalytics.Contracts.csproj">
+      <Project>{6bd9cd5d-ae41-4a4e-bc33-5e1887a34e13}</Project>
+      <Name>CompAnalytics.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CompAnalytics.Utils\CompAnalytics.Utils.csproj">
+      <Project>{611F4FAA-1010-497A-BCC6-1B36D7ADF9DB}</Project>
+      <Name>CompAnalytics.Utils</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="CompAnalytics.X9.nuspec" />
+    <None Include="packageForNuget.ps1" />
+    <None Include="readme.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="releases\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
