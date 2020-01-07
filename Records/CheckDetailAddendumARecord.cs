@@ -10,9 +10,9 @@ namespace CompAnalytics.X9.Records
     /// </remarks>
     [DataContract]
     [Serializable]
-    public class CheckDetailAddendumRecord : X9Record
+    public class CheckDetailAddendumARecord : X9Record
     {
-        public CheckDetailAddendumRecord() : base() { }
+        public CheckDetailAddendumARecord() : base() { }
 
         [Order]
         [DataMember]
@@ -22,7 +22,7 @@ namespace CompAnalytics.X9.Records
         public X9TextField ReturnLocationRoutingNumber { get; set; } = new X9TextField(new X9FieldType("ReturnLocationRoutingNumber", X9FieldDataTypes.Numeric, 9));
         [Order]
         [DataMember]
-        public X9TextField BofdEndorsementBusinessDate { get; set; } = new X9TextField(new X9FieldType("BofdEndorsementBusinessDate", X9FieldDataTypes.Numeric, 8));
+        public X9TextField BofdEndorsementBusinessDate { get; set; } = new X9TextField(new X9FieldType("BofdEndorsementBusinessDate", X9FieldDataTypes.Numeric, 8, typeof(DateTimeOffset)));
         [Order]
         [DataMember]
         public X9TextField BofdItemSequenceNumber { get; set; } = new X9TextField(new X9FieldType("BofdItemSequenceNumber", X9FieldDataTypes.Numeric, 15));

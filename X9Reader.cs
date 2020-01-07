@@ -126,7 +126,6 @@ namespace CompAnalytics.X9
         /// Given a well-structured X9Document, takes each ImageViewDataRecord's ImageData field, represented as a byte[],
         /// and writes those bytes to a specified location on disk.
         /// </summary>
-        /// <param name="doc">X9Document representing an ICL file</param>
         /// <param name="destDir">Destination directory to store the check images written to disk</param>
         /// <param name="virtualRunPath">
         ///     Optional - If provided, this represents the virtual path of a Composable DataFlow's run directory.
@@ -145,15 +144,17 @@ namespace CompAnalytics.X9
                 destDir.Create();
             }
 
-            IEnumerable<X9DepositItem> checks = this.Document.Deposits
-                .SelectMany(dep => dep.Bundles)
-                .SelectMany(bund => bund.DepositItems);
+            IEnumerable<X9Bundle> bundles = this.Document.Deposits
+                .SelectMany(dep => dep.Bundles);
+            IEnumerable<ICheckImageContainer> checks = bundles.SelectMany(bund => bund.DepositItems).Cast<ICheckImageContainer>()
+                .Concat(bundles.SelectMany(bund => bund.ReturnItems).Cast<ICheckImageContainer>());
             int i = 0;
-            foreach (X9DepositItem check in checks)
+            foreach (ICheckImageContainer check in checks)
             {
+                string itemType = check is X9DepositItem ? "check" : "return";
                 string idxLabel = i.ToString().PadLeft(5, '0');
-                string frontName = $"check-{idxLabel}-front.tif";
-                string backName = $"check-{idxLabel}-back.tif";
+                string frontName = $"{itemType}-{idxLabel}-front.tif";
+                string backName = $"{itemType}-{idxLabel}-back.tif";
                 Queue<X9DepositItemImage> sides = new Queue<X9DepositItemImage>(check.Images);
 
                 if (sides.Any())
@@ -223,23 +224,57 @@ namespace CompAnalytics.X9
                     deposit.Bundles.Add(bundle);
                     bundle.Header = this.ReadNextRecord<BundleHeaderRecord>();
 
-                    while (this.PeekNextRecordType() == typeof(CheckDetailRecord))
-                    {
-                        var depositItem = new X9DepositItem();
-                        bundle.DepositItems.Add(depositItem);
-                        depositItem.CheckDetail = this.ReadNextRecord<CheckDetailRecord>();
-                        if (this.PeekNextRecordType() == typeof(CheckDetailAddendumRecord))
+                    if (this.PeekNextRecordType() == typeof(CheckDetailRecord))
+                    { // reading a normal ICL
+                        do
                         {
-                            depositItem.CheckDetailAddendum = this.ReadNextRecord<CheckDetailAddendumRecord>();
+                            var depositItem = new X9DepositItem();
+                            bundle.DepositItems.Add(depositItem);
+                            depositItem.CheckDetail = this.ReadNextRecord<CheckDetailRecord>();
+                            if (this.PeekNextRecordType() == typeof(CheckDetailAddendumARecord))
+                            {
+                                depositItem.CheckDetailAddendum = this.ReadNextRecord<CheckDetailAddendumARecord>();
+                            }
+                            while (this.PeekNextRecordType() == typeof(ImageViewDetailRecord))
+                            {
+                                var image = new X9DepositItemImage();
+                                depositItem.Images.Add(image);
+                                image.ImageViewDetail = this.ReadNextRecord<ImageViewDetailRecord>();
+                                image.ImageViewData = this.ReadNextRecord<ImageViewDataRecord>();
+                            }
                         }
-                        while (this.PeekNextRecordType() == typeof(ImageViewDetailRecord))
-                        {
-                            var image = new X9DepositItemImage();
-                            depositItem.Images.Add(image);
-                            image.ImageViewDetail = this.ReadNextRecord<ImageViewDetailRecord>();
-                            image.ImageViewData = this.ReadNextRecord<ImageViewDataRecord>();
-                        }
+                        while (this.PeekNextRecordType() == typeof(CheckDetailRecord));
                     }
+                    else if (this.PeekNextRecordType() == typeof(ReturnRecord))
+                    { // reading an ICLr (return)
+                        do
+                        {
+                            var returnItem = new X9ReturnItem();
+                            bundle.ReturnItems.Add(returnItem);
+                            returnItem.Return = this.ReadNextRecord<ReturnRecord>();
+                            if (this.PeekNextRecordType() == typeof(ReturnAddendumARecord))
+                            {
+                                returnItem.ReturnAddendumA = this.ReadNextRecord<ReturnAddendumARecord>();
+                            }
+                            if (this.PeekNextRecordType() == typeof(ReturnAddendumBRecord))
+                            {
+                                returnItem.ReturnAddendumB = this.ReadNextRecord<ReturnAddendumBRecord>();
+                            }
+                            if (this.PeekNextRecordType() == typeof(ReturnAddendumDRecord))
+                            {
+                                returnItem.ReturnAddendumD = this.ReadNextRecord<ReturnAddendumDRecord>();
+                            }
+                            while (this.PeekNextRecordType() == typeof(ImageViewDetailRecord))
+                            {
+                                var image = new X9DepositItemImage();
+                                returnItem.Images.Add(image);
+                                image.ImageViewDetail = this.ReadNextRecord<ImageViewDetailRecord>();
+                                image.ImageViewData = this.ReadNextRecord<ImageViewDataRecord>();
+                            }
+                        }
+                        while (this.PeekNextRecordType() == typeof(ReturnRecord));
+                    }
+
                     bundle.Trailer = this.ReadNextRecord<BundleTrailerRecord>();
                 }
 

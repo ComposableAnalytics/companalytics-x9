@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Runtime.Serialization;
 
 namespace CompAnalytics.X9
@@ -22,16 +23,23 @@ namespace CompAnalytics.X9
 
         internal object DeserializeToNominalType(string val)
         {
-            string unpadded = this.UnpadValue(val);
-            if (!string.IsNullOrWhiteSpace(unpadded))
+            if (!string.IsNullOrWhiteSpace(val))
             {
-                if (this.NominalClrType == typeof(long?))
+                string unpadded = this.UnpadValue(val);
+                if (!string.IsNullOrWhiteSpace(unpadded))
                 {
-                    return long.Parse(unpadded);
+                    if (this.NominalClrType == typeof(long?))
+                    {
+                        return long.Parse(unpadded);
+                    }
+                    else
+                    {
+                        return Convert.ChangeType(unpadded, this.NominalClrType);
+                    }
                 }
                 else
                 {
-                    return Convert.ChangeType(unpadded, this.NominalClrType);
+                    return null;
                 }
             }
             else
@@ -49,7 +57,9 @@ namespace CompAnalytics.X9
                 throw new ArgumentException($"Cannot set field {fieldType.Name} value to '{unpadded}'. The length of the data " +
                     $"({unpadded.Length}) exceeds the available length for this field ({length}).");
             }
-            return this.PadValue(unpadded, length);
+            return string.IsNullOrWhiteSpace(unpadded)
+                ? new string(' ', length) // if no value, we fill with spaces instead of the field type's pad character
+                : this.PadValue(unpadded, length);
         }
 
         internal string UnpadValue(string serialized)

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -27,6 +27,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>CS1591</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -60,6 +61,9 @@
     <Compile Include="..\AssemblyVersion.cs">
       <Link>Properties\AssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="Document\ICheckImageContainer.cs" />
+    <Compile Include="Document\X9AuthoringException.cs" />
+    <Compile Include="Document\X9ReturnItem.cs" />
     <Compile Include="Document\X9DocumentComponent.cs" />
     <Compile Include="JPMorganAuthoring\BundleAuthoringInfo.cs" />
     <Compile Include="JPMorganAuthoring\DepositAuthoringInfo.cs" />
@@ -73,7 +77,11 @@
     <Compile Include="JPMorganAuthoring\JPMorganConsts.cs" />
     <Compile Include="Records\CashLetterTrailerRecord.cs" />
     <Compile Include="Records\BundleTrailerRecord.cs" />
-    <Compile Include="Records\CheckDetailAddendumRecord.cs" />
+    <Compile Include="Records\CheckDetailAddendumARecord.cs" />
+    <Compile Include="Records\ReturnAddendumDRecord.cs" />
+    <Compile Include="Records\ReturnAddendumBRecord.cs" />
+    <Compile Include="Records\ReturnAddendumARecord.cs" />
+    <Compile Include="Records\ReturnRecord.cs" />
     <Compile Include="Records\FileTrailerRecord.cs" />
     <Compile Include="Records\ImageViewDataRecord.cs" />
     <Compile Include="Records\ImageViewDetailRecord.cs" />
@@ -108,7 +116,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="CompAnalytics.X9.nuspec" />
+    <None Include="LICENSE" />
     <None Include="packageForNuget.ps1" />
+    <None Include="publishing-releases.md" />
     <None Include="readme.md" />
   </ItemGroup>
   <ItemGroup>

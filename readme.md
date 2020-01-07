@@ -6,7 +6,7 @@ This library contains classes that represent, read, and write binary X9.100-187 
 
 ## Authors
 
-1. Ryan O'Shea [https://ryanoshea.com](https://ryanoshea.com) for [Composable Analytics](https://composable.ai), from Oct. to Dec. 2019.
+1. Ryan O'Shea [https://ryanoshea.com](https://ryanoshea.com) for [Composable Analytics](https://composable.ai), from Oct. 2019 to Jan. 2020.
 
 ## API Specification
 
@@ -20,18 +20,22 @@ Full source is [available on GitHub](https://github.com/ComposableAnalytics/comp
 
 The following X9 file record types are fully supported for reading and writing.
 
-| Record                         | Class name                |  Record Type Code |
-|--------------------------------|---------------------------|-------------------|
-| File Header Record             | FileHeaderRecord          | 01                |
-| Cash Letter Header Record      | CashLetterHeaderRecord    | 10                |
-| Bundle Header Record           | BundleHeaderRecord        | 20                |
-| Check Detail Record            | CheckDetailRecord         | 25                |
-| Check Detail Addendum A Record | CheckDetailAddendumRecord | 26                |
-| Image View Detail Record       | ImageViewDetailRecord     | 50                |
-| Image View Data Record*        | ImageViewDataRecord       | 52                |
-| Bundle Trailer Record          | BundleTrailerRecord       | 70                |
-| Cash Letter Trailer Record     | CashLetterTrailerRecord   | 90                |
-| File Trailer Record            | FileTrailerRecord         | 99                |
+| Record                         | Class Name                 |  Record Type Code |
+|--------------------------------|----------------------------|-------------------|
+| File Header Record             | FileHeaderRecord           | 01                |
+| Cash Letter Header Record      | CashLetterHeaderRecord     | 10                |
+| Bundle Header Record           | BundleHeaderRecord         | 20                |
+| Check Detail Record            | CheckDetailRecord          | 25                |
+| Check Detail Addendum A Record | CheckDetailAddendumARecord | 26                |
+| Return Record                  | ReturnRecord               | 31                |
+| Return Addendum A Record       | ReturnAddendumARecord      | 32                |
+| Return Addendum B Record       | ReturnAddendumBRecord      | 33                |
+| Return Addendum D Record       | ReturnAddendumDRecord      | 35                |
+| Image View Detail Record       | ImageViewDetailRecord      | 50                |
+| Image View Data Record*        | ImageViewDataRecord        | 52                |
+| Bundle Trailer Record          | BundleTrailerRecord        | 70                |
+| Cash Letter Trailer Record     | CashLetterTrailerRecord    | 90                |
+| File Trailer Record            | FileTrailerRecord          | 99                |
 
 \* See [Limitations](#Limitations)
 
@@ -55,6 +59,8 @@ using (X9Reader reader = new X9Reader(x9File))
 ### Authoring an X9Document
 
 Below is an example of producing an (incomplete) `X9Document` by creating most of the required records and setting a few field values. This example leaves out a few fields and may contain a few mistakes, but the general pattern should be apparent at least. Each X9Document starts completely empty, and each `X9Record` or additional `X9DocumentComponent` must be initialized and filled out.
+
+This example authors a normal ICL file. For an ICLr return file, simply populate the `ReturnItems` within each `X9Bundle` rather than the `DepositItems`. 
 
 ```csharp
 public static X9Document Create(List<CheckInfo> checks)
@@ -235,6 +241,5 @@ This library was originally developed in 2019 during an accounts-receivable auto
 1. Some classes, notably the various classes modeling each type of record in the X9 file (`X9Record`s), contain a method for quickly setting the values of some fields based on a limited set of arguments and populating other fields with JPMorgan's defaults. There are also `DataContract` classes under `CompAnalytics.X9.JPMorganAuthoring` that specifically model only the non-static fields needed when sending these files to JPMorgan. While these have been left in for compatibility with our original use case, these specialized classes & methods can be safely ignored and the library can be used for general-purpose X9 file creation.
 1. To reduce complexity, the library only supports one dynamic-length field per record. As a result, the Image View Data Record (`Records.ImageViewDatRecord`) supports arbitrary-length image data (Field 19), but the other dynamic-length fields in that record are not supported and must be left empty to produce a valid file. This includes Field 17, the digital signature, and Field 15, the image reference key. The corresponding length fields for these two fields (14 and 16, respectively), must also be left at their default value, `0`, indicating that the fields both have a length of zero bytes.
 1. Images are provided to the `ImageViewDataRecord` by supplying a byte[] representing the image file. These must be from TIFF images compressed with CCITT Group 4. Check your institution for image dimension and resolution requirements.
-1. Currently, the library does not support reading ICLr return files for returned checks. There are plans to support these in the future.
 
 Additionally, the library takes a dependency on Entity Framework due to its reliance on `CompAnalytics.Contracts`, our base assembly for all `DataContracts` sent over the wire in the [Composable](https://composable.ai) data analytics platform, of which this library is a component. We would like to remove this dependency, but we currently aren't able to. None of the Entity Framework types referenced by `CompAnalytics.Contracts` are used by `CompAnalytics.X9`, so as long as you can include the EF dependency and resolve any type load issues, you won't need to worry about runtime errors caused by version mismatches.

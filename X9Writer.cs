@@ -46,20 +46,49 @@ namespace CompAnalytics.X9
 
                 foreach (X9Bundle bundle in deposit.Bundles)
                 {
+                    bundle.ThrowIfInvalid();
                     this.WriteRecord(bundle.Header);
-
-                    foreach (X9DepositItem item in bundle.DepositItems)
+                    
+                    if (bundle.IsDeposit)
                     {
-                        this.WriteRecord(item.CheckDetail);
-                        if (item.CheckDetailAddendum != null)
+                        foreach (X9DepositItem item in bundle.DepositItems)
                         {
-                            this.WriteRecord(item.CheckDetailAddendum);
-                        }
+                            this.WriteRecord(item.CheckDetail);
+                            if (item.CheckDetailAddendum != null)
+                            {
+                                this.WriteRecord(item.CheckDetailAddendum);
+                            }
 
-                        foreach (X9DepositItemImage image in item.Images)
+                            foreach (X9DepositItemImage image in item.Images)
+                            {
+                                this.WriteRecord(image.ImageViewDetail);
+                                this.WriteRecord(image.ImageViewData);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (X9ReturnItem item in bundle.ReturnItems)
                         {
-                            this.WriteRecord(image.ImageViewDetail);
-                            this.WriteRecord(image.ImageViewData);
+                            this.WriteRecord(item.Return);
+                            if (item.ReturnAddendumA != null)
+                            {
+                                this.WriteRecord(item.ReturnAddendumA);
+                            }
+                            if (item.ReturnAddendumB != null)
+                            {
+                                this.WriteRecord(item.ReturnAddendumB);
+                            }
+                            if (item.ReturnAddendumD != null)
+                            {
+                                this.WriteRecord(item.ReturnAddendumD);
+                            }
+
+                            foreach (X9DepositItemImage image in item.Images)
+                            {
+                                this.WriteRecord(image.ImageViewDetail);
+                                this.WriteRecord(image.ImageViewData);
+                            }
                         }
                     }
 

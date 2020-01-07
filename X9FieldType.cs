@@ -35,7 +35,7 @@ namespace CompAnalytics.X9
 
         internal object ConvertVal(object value, Type fromType, Type toType)
         {
-            if (fromType == toType)
+            if (value == null || fromType == toType)
             {
                 return value;
             }
